@@ -40,6 +40,14 @@ app.get('/:shortcode',async (req,res) => {
     res.redirect(url.longUrl);
 });
 
+app.get('/api/admin/urls', async (req, res) => {
+  const authHeader = req.headers['authorization'];
+  if (authHeader !== `Bearer ${process.env.ADMIN_TOKEN}`) {
+    return res.status(403).json({ error: 'Unauthorized' });
+  }
+  const urls = await Url.find().sort({ createdAt: -1 });
+  res.json(urls);
+});
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
